@@ -18,3 +18,8 @@ export type EmojiListProps = {
   onSelect: (arg: any) => void;
   onCloseModal: () => void;
 };
+
+export type EmojiStickerProps = {
+  imageSize: number;
+  stickerSource: string;
+};

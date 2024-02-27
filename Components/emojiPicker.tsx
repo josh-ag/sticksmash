@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
   },
+
   titleContainer: {
     height: "16%",
     backgroundColor: "#464C55",
@@ -48,10 +49,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+
   title: {
     color: "#fff",
     fontSize: 16,
   },
+
   pickerContainer: {
     flexDirection: "row",
     justifyContent: "center",

@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "./Components/Button";
 import { ImageViewer } from "./Components/imageView";
 import * as ImagePicker from "expo-image-picker";
@@ -8,11 +9,12 @@ import { IconButton } from "./Components/iconButton";
 import { CircleButton } from "./Components/circleButton";
 import { EmojiPicker } from "./Components/emojiPicker";
 import { EmojiList } from "./Components/emojiList";
+import { EmojiSticker } from "./Components/emojiSticker";
 const placeholderImage = require("./assets/images/background-image.png");
 
 export default function App() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [pickEmoji, setPickEmoji] = useState<string>("");
+  const [pickedEmoji, setPickedEmoji] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
 
@@ -38,56 +40,62 @@ export default function App() {
   const onReset = () => {
     setShowAppOptions(false);
   };
-
+  //@handle adding of sticker
   const onAddSticker = () => {
     //do something
     setIsModalVisible(true);
   };
+  //@handle saving of image
   const onSaveImageAsync = async () => {
     //do something
   };
-
+  //@handle closing of modal
   const onModalClose = () => {
     setIsModalVisible(false);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ImageViewer imageSource={placeholderImage} />
-      </View>
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <ImageViewer imageSource={placeholderImage} />
+          {pickedEmoji && (
+            <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
+          )}
+        </View>
 
-      {showAppOptions ? (
-        <View style={styles.optionsContainer}>
-          <View style={styles.optionsRow}>
-            <IconButton icon="refresh" label="Reset" onPress={onReset} />
-            <CircleButton onPress={onAddSticker} />
-            <IconButton
-              icon="save-alt"
-              label="Save"
-              onPress={onSaveImageAsync}
+        {showAppOptions ? (
+          <View style={styles.optionsContainer}>
+            <View style={styles.optionsRow}>
+              <IconButton icon="refresh" label="Reset" onPress={onReset} />
+              <CircleButton onPress={onAddSticker} />
+              <IconButton
+                icon="save-alt"
+                label="Save"
+                onPress={onSaveImageAsync}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.footerContainer}>
+            <Button
+              theme="primary"
+              label="Choose a photo"
+              onPress={pickImageAsync}
+            />
+            <Button
+              label="Use this photo"
+              onPress={() => setShowAppOptions(true)}
             />
           </View>
-        </View>
-      ) : (
-        <View style={styles.footerContainer}>
-          <Button
-            theme="primary"
-            label="Choose a photo"
-            onPress={pickImageAsync}
-          />
-          <Button
-            label="Use this photo"
-            onPress={() => setShowAppOptions(true)}
-          />
-        </View>
-      )}
+        )}
 
-      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-        <EmojiList onCloseModal={onModalClose} onSelect={setPickEmoji} />
-      </EmojiPicker>
-      <StatusBar style="auto" />
-    </View>
+        <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+          <EmojiList onCloseModal={onModalClose} onSelect={setPickedEmoji} />
+        </EmojiPicker>
+        <StatusBar style="auto" />
+      </View>
+    </GestureHandlerRootView>
   );
 }
 

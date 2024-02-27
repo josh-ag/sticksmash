@@ -15,7 +15,7 @@ export const EmojiList = ({ onSelect, onCloseModal }: EmojiListProps) => {
   return (
     <FlatList
       horizontal
-      showsHorizontalScrollIndicator={Platform.OS === "web" ? true : false}
+      showsHorizontalScrollIndicator={Platform.OS === "web"}
       contentContainerStyle={styles.listContainer}
       data={emoji}
       renderItem={({ item, index }: any) => (
