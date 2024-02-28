@@ -1,7 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { captureRef } from "react-native-view-shot";
+import domtoimage from "dom-to-image";
 import * as MediaLibrary from "expo-media-library";
 import { Button } from "./Components/Button";
 import { ImageViewer } from "./Components/imageView";
@@ -57,22 +58,39 @@ export default function App() {
   //@handle saving of image
   const onSaveImageAsync = async () => {
     //do something
+    if (Platform.OS !== "web") {
+      try {
+        const localUrl = await captureRef(imageRef, {
+          quality: 1,
+          width: 440,
+        });
 
-    try {
-      const localUrl = await captureRef(imageRef, {
-        quality: 1,
-        width: 440,
-      });
+        //@save to local
+        await MediaLibrary.saveToLibraryAsync(localUrl);
 
-      //@save to local
-      await MediaLibrary.saveToLibraryAsync(localUrl);
-
-      if (localUrl) {
-        Alert.alert("Saved!");
+        if (localUrl) {
+          Alert.alert("Saved!");
+        }
+      } catch (error) {
+        //@handle error
+        console.error("[ScreenShotError] ", error);
       }
-    } catch (error) {
-      //@handle error
-      console.error("[ScreenShotError] ", error);
+    } else {
+      try {
+        const dataUrl = await domtoimage.toJpeg(imageRef.current, {
+          quality: 0.95,
+          width: 320,
+          height: 440,
+        });
+
+        const link = document.createElement("a");
+        link.download = "StickerMash.jpg";
+        link.href = dataUrl;
+        link.click();
+      } catch (e) {
+        //@handle error
+        console.error("[ScreenShotError] ", e);
+      }
     }
   };
   //@handle closing of modal
@@ -121,7 +139,7 @@ export default function App() {
         <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
           <EmojiList onCloseModal={onModalClose} onSelect={setPickedEmoji} />
         </EmojiPicker>
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
       </View>
     </GestureHandlerRootView>
   );
